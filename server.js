@@ -3,7 +3,7 @@ const cors=require('cors')
 const axios=require('axios')
 require('dotenv').config()
 const ChocolateModel=require('./modules/mongo')
-const server= express()
+const server=new express()
 
 server.use(cors())
 server.use(express.json())
