@@ -9,9 +9,29 @@ server.use(cors())
 server.use(express.json())
 
 
+async function updateOne(req, res){
+console.log(req.body);
+const {email,title,imageUrl,id} = req.body
+await ChocolateModel.findByIdAndUpdate({_id:id},{title,imageUrl},(err,data)=>{
+    if(err){
+        res.send(err)
+    }else{
+        ChocolateModel.find({email:email},(error,data)=>{
+            if(error){
+                res.send(error)
+            }else{
+                console.log(data);
+                res.send(data) 
+            }
+        })
+    }
+})
+}
+
 async function deleteOne(req,res){
-    let id=req.params.id
-    let email=req.body
+    let {id,email}=req.params
+    console.log({id});
+    console.log({email});
 
    await ChocolateModel.deleteOne({_id:id},(error,data)=>{
         if(error){
@@ -21,6 +41,7 @@ async function deleteOne(req,res){
                 if(error){
                     res.send(error)
                 }else{
+                    console.log(data);
                     res.send(data) 
                 }
             })
@@ -30,10 +51,6 @@ async function deleteOne(req,res){
 
 async function getAllChocolate(req,res){
     let allChocolate = await axios.get('https://ltuc-asac-api.herokuapp.com/allChocolateData')
-    // let data=[]
-    // for (let i = 0; i < allChocolate.data.length; i++) {
-    //     data.push(new Chocolate(allChocolate.data.title,allChocolate.data.imageUrl))
-    // }   
     res.send(allChocolate.data)
 }
 
@@ -55,8 +72,8 @@ ChocolateModel.find({email:email},(error,data)=>{
 })
 
 }
-
-server.delete('/Chocolate/:id',deleteOne)
+server.put('/Chocolate',updateOne)
+server.delete('/Chocolate/:id/:email',deleteOne)
 server.post('/Chocolate',addToCollection)
 server.get('/Chocolate',getAllChocolate)
 
